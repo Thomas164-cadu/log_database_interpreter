@@ -1,13 +1,7 @@
 const {Router} = require('express');
 const router = Router();
-const Logs = require('./models/logs');
+const LogController = require('./controller/LogController');
 
-router.post('/log', async (req, res) => {
-    const {descricao} = req.body;
-
-    const log = await Logs.create({descricao});
-
-    res.json({log});
-});
+router.post('/log', LogController.sinteticLog);
 
 module.exports = router;
