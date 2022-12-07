@@ -16,8 +16,12 @@ module.exports = {
         autoIncrement: true,
         allowNull: false
       },
-      descricao: {
-        type: Sequelize.STRING,
+      A: {
+        type: Sequelize.INTEGER,
+        allowNull: false
+      },
+      B: {
+        type: Sequelize.INTEGER,
         allowNull: false
       },
       created_at: {

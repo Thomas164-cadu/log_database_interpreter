@@ -16,7 +16,7 @@ function conversor(param, array) {
 module.exports = {
     async sinteticLog(req, res) {
         try{
-            const {log, variaveis} = req.body;
+            const {log} = req.body;
 
             const logger = [];
 
@@ -69,38 +69,73 @@ module.exports = {
             var naoFez = '';
             var parametros = [];
 
+            console.log(started);
+            console.log(commited);
+
+            console.log(separate[1]);
 
             started.map((item, index) => {
-                if(commited.indexOf(item) > -1 && separate[1].includes(item)){
-                    fezRedo = 'Transação ' + item + ' realizou REDO';
-                    resposta.push(fezRedo);
-                }else if(separate[1].includes(item)){
-                    naoFez = 'Transação ' + item + ' não realizou REDO';
-                    resposta.push(naoFez);
-                }else{
-                    operations.map((element, pos) => {
-                        if(element.includes(item)){
-                            element = element.replace(item + ',', '');
-                            element.split(',').map((param, i) => {
-                                if(param != ''){
-                                    if(!isNumber(param)){
-                                        param.split(' ').map((col) => {
-                                            if(col != ''){
-                                                if(variaveis.id.indexOf(i-1)){
-                                                    variaveis[col] = [parseInt(element.split(',')[i+1]), parseInt(element.split(',')[i+2])];
+                if(separate[1] != undefined){
+                    if(commited.indexOf(item) > -1 && separate[1].includes(item)){
+                        console.log(item)
+                        fezRedo = 'Transação ' + item + ' realizou REDO';
+                        resposta.push(fezRedo);
+                    }else if(separate[1].includes(item)){
+                        naoFez = 'Transação ' + item + ' não realizou REDO';
+                        resposta.push(naoFez);
+                    }else{
+                        operations.map((element, pos) => {
+                            if(element.includes(item)){
+                                element = element.replace(item + ',', '');
+                                element.split(',').map((param, i) => {
+                                    if(param != ''){
+                                        if(!isNumber(param)){
+                                            param.split(' ').map((col) => {
+                                                if(col != ''){
+                                                    if(variaveis.id.indexOf(i-1)){
+                                                        variaveis[col] = [parseInt(element.split(',')[i+1]), parseInt(element.split(',')[i+2])];
+                                                    }
                                                 }
-                                            }
-                                        });
-                                    }                                    
-                                }
-                            });
-                        }
-                    });
+                                            });
+                                        }                                    
+                                    }
+                                });
+                            }
+                        });
+                    }
+                }else{
+                    if(commited.indexOf(item) > -1 && separate[0].includes(item)){
+                        console.log(item)
+                        fezRedo = 'Transação ' + item + ' realizou REDO';
+                        resposta.push(fezRedo);
+                    }else if(separate[0].includes(item)){
+                        naoFez = 'Transação ' + item + ' não realizou REDO';
+                        resposta.push(naoFez);
+                    }else{
+                        operations.map((element, pos) => {
+                            if(element.includes(item)){
+                                element = element.replace(item + ',', '');
+                                element.split(',').map((param, i) => {
+                                    if(param != ''){
+                                        if(!isNumber(param)){
+                                            param.split(' ').map((col) => {
+                                                console.log(param);
+                                                if(col != ''){
+                                                    if(variaveis.id.indexOf(i-1)){
+                                                        var aux = [parseInt(element.split(',')[i+1]), parseInt(element.split(',')[i+2])];
+                                                    }
+                                                }
+                                            });
+                                        }                                    
+                                    }
+                                });
+                            }
+                        });
+                    }
                 }
-
             });
             
-            res.json({resposta, variaveis});
+            res.json({resposta});
         }catch{
 
         }
