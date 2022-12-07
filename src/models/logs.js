@@ -3,7 +3,8 @@ const {Model, DataTypes} = require('sequelize');
 class Log extends Model {
     static init(sequelize) {
         super.init({
-            descricao: DataTypes.STRING
+            a: DataTypes.INTEGER,
+            b: DataTypes.INTEGER
         }, {
             sequelize
         })

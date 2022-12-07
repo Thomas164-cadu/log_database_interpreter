@@ -16,11 +16,11 @@ module.exports = {
         autoIncrement: true,
         allowNull: false
       },
-      A: {
+      a: {
         type: Sequelize.INTEGER,
         allowNull: false
       },
-      B: {
+      b: {
         type: Sequelize.INTEGER,
         allowNull: false
       },

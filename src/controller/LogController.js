@@ -1,16 +1,8 @@
 const Log = require('../models/logs');
+const { param } = require('../routes');
 
 function isNumber(n) {
     return !isNaN(parseFloat(n)) && isFinite(n);
-}
-
-function conversor(param, array) {
-    return function(key, value) {
-        if (key == param) {
-            return array;
-        }
-        return value;
-    }
 }
 
 module.exports = {
@@ -69,17 +61,13 @@ module.exports = {
             var naoFez = '';
             var parametros = [];
 
-            console.log(started);
-            console.log(commited);
-
-            console.log(separate[1]);
-
             started.map((item, index) => {
+
                 if(separate[1] != undefined){
                     if(commited.indexOf(item) > -1 && separate[1].includes(item)){
-                        console.log(item)
                         fezRedo = 'Transação ' + item + ' realizou REDO';
                         resposta.push(fezRedo);
+
                     }else if(separate[1].includes(item)){
                         naoFez = 'Transação ' + item + ' não realizou REDO';
                         resposta.push(naoFez);
@@ -92,9 +80,7 @@ module.exports = {
                                         if(!isNumber(param)){
                                             param.split(' ').map((col) => {
                                                 if(col != ''){
-                                                    if(variaveis.id.indexOf(i-1)){
-                                                        variaveis[col] = [parseInt(element.split(',')[i+1]), parseInt(element.split(',')[i+2])];
-                                                    }
+                                                    parametros = [...parametros, [col, parseInt(element.split(',')[i+2]), parseInt(element.split(',')[i-1])]];
                                                 }
                                             });
                                         }                                    
@@ -122,7 +108,7 @@ module.exports = {
                                                 console.log(param);
                                                 if(col != ''){
                                                     if(variaveis.id.indexOf(i-1)){
-                                                        var aux = [parseInt(element.split(',')[i+1]), parseInt(element.split(',')[i+2])];
+                                                        aux = [parseInt(element.split(',')[i+1]), parseInt(element.split(',')[i+2])];
                                                     }
                                                 }
                                             });
@@ -134,11 +120,27 @@ module.exports = {
                     }
                 }
             });
-            
-            res.json({resposta});
-        }catch{
 
+            parametros.map(async (item) => {
+                const idTupla = await Log.findOne({where: {id: item[2]}});
+            
+                if(idTupla){
+                    if(item[0] == 'A'){
+                        const log = await Log.update({a: item[1]}, {where: {id: item[2]}}).then((result) => {console.log(result)});
+                    }else{
+                        const log = await Log.update({b: item[1]}, {where: {id: item[2]}}).then((result) => {console.log(result)});
+                    }
+                }else{
+                    return 'Não existe';
+                }
+            });
+            
+            res.json({resposta, parametros});
+        }catch(error){
+            console.log(error);
+            res.status(400).json({error: 'Erro ao realizar o log'});
         }
         
-    }
+    },
+
 }
