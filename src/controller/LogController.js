@@ -60,6 +60,7 @@ module.exports = {
             var fezRedo = '';
             var naoFez = '';
             var parametros = [];
+            var redo = [];
 
             started.map((item, index) => {
 
@@ -67,6 +68,22 @@ module.exports = {
                     if(commited.indexOf(item) > -1 && separate[1].includes(item)){
                         fezRedo = 'Transação ' + item + ' realizou REDO';
                         resposta.push(fezRedo);
+                        operations.map((element, pos) => {
+                            if(element.includes(item)){
+                                element = element.replace(item + ',', '');
+                                element.split(',').map((param, i) => {
+                                    if(param != ''){
+                                        if(!isNumber(param)){
+                                            param.split(' ').map((col) => {
+                                                if(col != ''){
+                                                    redo = [...redo, [col, parseInt(element.split(',')[i+2]), parseInt(element.split(',')[i-1])]];
+                                                }
+                                            });
+                                        }                                    
+                                    }
+                                });
+                            }
+                        });
 
                     }else if(separate[1].includes(item)){
                         naoFez = 'Transação ' + item + ' não realizou REDO';
@@ -94,6 +111,22 @@ module.exports = {
                         console.log(item)
                         fezRedo = 'Transação ' + item + ' realizou REDO';
                         resposta.push(fezRedo);
+                        operations.map((element, pos) => {
+                            if(element.includes(item)){
+                                element = element.replace(item + ',', '');
+                                element.split(',').map((param, i) => {
+                                    if(param != ''){
+                                        if(!isNumber(param)){
+                                            param.split(' ').map((col) => {
+                                                if(col != ''){
+                                                    redo = [...redo, [col, parseInt(element.split(',')[i+2]), parseInt(element.split(',')[i-1])]];
+                                                }
+                                            });
+                                        }                                    
+                                    }
+                                });
+                            }
+                        });
                     }else if(separate[0].includes(item)){
                         naoFez = 'Transação ' + item + ' não realizou REDO';
                         resposta.push(naoFez);
@@ -134,8 +167,24 @@ module.exports = {
                     return 'Não existe';
                 }
             });
+
+            redo.map(async (item) => {
+                const idTupla = await Log.findOne({where: {id: item[2]}});
             
-            res.json({resposta, parametros});
+                if(idTupla){
+                    if(item[0] == 'A'){
+                        const log = await Log.update({a: item[1]}, {where: {id: item[2]}}).then((result) => {console.log(result)});
+                    }else{
+                        const log = await Log.update({b: item[1]}, {where: {id: item[2]}}).then((result) => {console.log(result)});
+                    }
+                }else{
+                    return 'Não existe';
+                }
+            });
+
+            resposta.push()
+            
+            res.json({resposta, parametros, redo});
         }catch(error){
             console.log(error);
             res.status(400).json({error: 'Erro ao realizar o log'});
