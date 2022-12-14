@@ -6,11 +6,17 @@ Para executar o projeto:
 
 Configure seu banco no documento db.js no caminho 'src/config/db.js' apontando para um banco local
 
-*Clone o repositório na sua máquina e rode os seguintes comandos no terminal na pasta clonada;
+/*Clone o repositório na sua máquina e rode os seguintes comandos no terminal na pasta clonada;
+
 $ npm install
+
 $ npx sequelize db:migrate:undo //para dar rollback na migration e garantir a criação da tabela
+
 $ npx sequelize db:migrate //para criar a tabela de fato
+
 $ npm run dev
+
+*/
 
 Em seguida adicione 2 tuplas com os valores desejados na tabela de logs.
 
